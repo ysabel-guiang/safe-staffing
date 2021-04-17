@@ -1,31 +1,68 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Card, Grid, Header, Icon, Progress, Button, Modal, Form, Input, Radio, Select, Dropdown } from 'semantic-ui-react'
 
+import { getTeamMembers } from '../apiClient'
 
-const Company = () => {
-  const [taskOpen, setTask] = React.useState(false)
-  const [employeeOpen, setEmployee] = React.useState(false)
+
+const Company = (props) => {
+  const { teamId } = props.match.params
+
+  const [taskOpen, setTask] = useState(false)
+  const [employeeOpen, setEmployee] = useState(false)
+  const [teamMembers, setMembers] = useState([{employeeId:'', role: '', name: '', contact: '', email: '', hours: ''}])
+
+  useEffect(() => {
+    getTeamMembers(teamId)
+      .then(members => {
+        setMembers(members)
+      })
+      .catch(err => {
+        console.error(err.message)
+      })
+  }, [])
 
   const options = [
     { key: 'angular', text: 'Angular', value: 'angular' },
     { key: 'css', text: 'CSS', value: 'css' },
-    { key: 'design', text: 'Graphic Design', value: 'design' },
-    { key: 'ember', text: 'Ember', value: 'ember' },
-    { key: 'html', text: 'HTML', value: 'html' },
-    { key: 'ia', text: 'Information Architecture', value: 'ia' },
-    { key: 'javascript', text: 'Javascript', value: 'javascript' },
-    { key: 'mech', text: 'Mechanical Engineering', value: 'mech' },
-    { key: 'meteor', text: 'Meteor', value: 'meteor' },
-    { key: 'node', text: 'NodeJS', value: 'node' },
-    { key: 'plumbing', text: 'Plumbing', value: 'plumbing' },
-    { key: 'python', text: 'Python', value: 'python' },
-    { key: 'rails', text: 'Rails', value: 'rails' },
-    { key: 'react', text: 'React', value: 'react' },
-    { key: 'repair', text: 'Kitchen Repair', value: 'repair' },
-    { key: 'ruby', text: 'Ruby', value: 'ruby' },
-    { key: 'ui', text: 'UI Design', value: 'ui' },
-    { key: 'ux', text: 'User Experience', value: 'ux' },
   ]
+
+  function listTeamMemberCards () {
+    return teamMembers.map(member => 
+      <Card key={member.employeeId}>
+      <Card.Content>
+        <Card.Header>{member.name}</Card.Header>
+        <Card.Description>
+          Role: {member.role}
+        </Card.Description>
+        <Card.Description>
+          Email: {member.email}
+        </Card.Description>
+        <Card.Description>
+          Contact: {member.contact}
+        </Card.Description>
+      </Card.Content>
+      <Card.Content extra textAlign='center'>
+        <Button compact primary>Edit</Button>
+        <Button compact secondary>Assign Task</Button>
+      </Card.Content>
+    </Card> 
+    )
+  }
+
+  function listTeamMemberTasks () {
+    return teamMembers.map(member => 
+      <>
+        <Header as='h5' key={Number(member.employeeId) + 1}>
+          {member.name}
+          <Header.Subheader>
+            {member.role}
+          </Header.Subheader>
+        </Header>
+        <Progress percent={44} color='blue' progress key={Number(member.employeeId) + 2}/>
+      </>
+    )
+  }
+
   
   return (
     <>
@@ -41,62 +78,14 @@ const Company = () => {
       </Header>
 
       <Card.Group itemsPerRow={3}>
-        <Card>
-          <Card.Content>
-            <Card.Header>Matthew</Card.Header>
-            <Card.Description>
-              Role: Technician
-            </Card.Description>
-            <Card.Description>
-              Email: Mathew.joins@yahoo.com
-            </Card.Description>
-            <Card.Description>
-              Contact: 2398120831
-            </Card.Description>
-          </Card.Content>
-          <Card.Content extra textAlign='center'>
-            <Button compact primary>Edit</Button>
-            <Button compact secondary>Assign Task</Button>
-          </Card.Content>
-        </Card>
-
-        <Card>
-          <Card.Content>
-            <Card.Header>Matthew</Card.Header>
-            <Card.Description>
-              Role: Technician
-            </Card.Description>
-            <Card.Description>
-              Email: Mathew.joins@yahoo.com
-            </Card.Description>
-            <Card.Description>
-              Contact: 2398120831
-            </Card.Description>
-          </Card.Content>
-        </Card>
-
-        <Card>
-          <Card.Content>
-            <Card.Header>Matthew</Card.Header>
-            <Card.Description>
-              Role: Technician
-            </Card.Description>
-            <Card.Description>
-              Email: Mathew.joins@yahoo.com
-            </Card.Description>
-            <Card.Description>
-              Contact: 2398120831
-            </Card.Description>
-          </Card.Content>
-        </Card>
-
+        {listTeamMemberCards()}
       </Card.Group>
       
       <Modal
         onClose={() => setEmployee(false)}
         onOpen={() => setEmployee(true)}
         open={employeeOpen}
-        trigger={<button class="ui button">Add Team Member</button>}
+        trigger={<button className="ui button">Add Team Member</button>}
        >
         <Modal.Header>Add a Team Member</Modal.Header>
         <Modal.Content>
@@ -159,7 +148,7 @@ const Company = () => {
         onClose={() => setTask(false)}
         onOpen={() => setTask(true)}
         open={taskOpen}
-        trigger={<button class="ui button">Assign a Task</button>}
+        trigger={<button className="ui button">Assign a Task</button>}
        >
         <Modal.Header>Assign a Task</Modal.Header>
         <Modal.Content>
@@ -229,37 +218,7 @@ const Company = () => {
         </Modal.Actions> 
       </Modal>
       
-      <Header as='h5'>
-        Matthew
-        <Header.Subheader>
-          Technician
-        </Header.Subheader>
-      </Header>
-      <Progress percent={44} color='blue' progress/>
-
-      <Header as='h5'>
-        Matthew
-        <Header.Subheader>
-          Technician
-        </Header.Subheader>
-      </Header>
-      <Progress percent={44} color='blue' progress/>
-
-      <Header as='h5'>
-        Matthew
-        <Header.Subheader>
-          Technician
-        </Header.Subheader>
-      </Header>
-      <Progress percent={44} color='blue' progress/>
-
-      <Header as='h5'>
-        Matthew
-        <Header.Subheader>
-          Technician
-        </Header.Subheader>
-      </Header>
-      <Progress percent={44} color='blue' progress/>
+      {listTeamMemberTasks()}
 
     </Grid.Column>
     </>

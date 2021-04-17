@@ -14,4 +14,15 @@ router.get('/', (req, res) => {
   }
 )
 
+router.get('/:teamId', (req,res) => {
+  const { teamId } = req.params
+  db.getEmployees(teamId)
+    .then(employees => {
+      res.json(employees)
+    })
+    .catch(err => {
+      res.status(500).send(err.message)
+    })
+})
+
 module.exports = router

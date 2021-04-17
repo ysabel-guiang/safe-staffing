@@ -7,3 +7,10 @@ export function getTeams() {
     .get(teamUrl)
     .then(res => res.body)
 }
+
+export function getTeamMembers(teamId) {
+  return request
+    .get(teamUrl + teamId)
+    .then(res => res.body)
+}
+
