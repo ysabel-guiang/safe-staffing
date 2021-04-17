@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 import {HashRouter as Router, Route, Link} from 'react-router-dom'
-import { Grid, Dropdown, Menu, Segment, DropdownItem } from 'semantic-ui-react'
+import { Grid, Dropdown, Menu, Segment} from 'semantic-ui-react'
 
 import { getTeams } from '../apiClient'
 
@@ -8,7 +8,7 @@ import Teams from './Teams'
 import Company from './Company'
 
 
-const App = (props) => {
+const App = () => {
   const [teams, setTeams] = useState([{teamId:'',teamName: '', description:''}])
 
   useEffect(() => {
@@ -19,14 +19,10 @@ const App = (props) => {
       .catch(err => console.error('not working'))
   },[])
 
-  function handleClick (evt) {
-    evt.preventDefault()
-    let target = evt.target
-    let value = target.getAttribute('value')
-    console.log(value)
-    props.history.push(value)
-    return null
+  function listTeams () {
+    return teams.map(team => <Dropdown.Item as={ Link } to={'/' + team.teamId} key={team.teamId}>{team.teamName}</Dropdown.Item> )
   }
+
   
 
 
@@ -51,22 +47,16 @@ const App = (props) => {
             <Menu.Item 
             name='Home'
             value='/'
-            onClick={handleClick}
+            as={ Link }
+            to={'/'}
             />
-
-            <Dropdown 
-            item 
-            text='Teams'
-            options={teams.map(team => {
-              return {
-                key: team.teamId,
-                text: team.teamName,
-                value: '/' + team.Id
-              }
-            })}
-            />
-               
+            <Dropdown item text='Teams'>
+              <Dropdown.Menu>
+                {listTeams()}
+              </Dropdown.Menu>
+            </Dropdown>      
           </Menu>
+
         </Grid.Column>
         <Route exact path='/' component={Teams} />
         <Route exact path='/:teamId' component={Company} />

@@ -19,20 +19,9 @@ const Teams = () => {
 
   function listTeams () {
     return teams.map(team => 
-      <div class="ui red fluid card">
-          <div class="content">
-            <div class="header">{team.teamName}</div>
-            <div class="description">{team.teamDescription}</div>
-          </div>
-        </div>  
-    )
-  }
-
-  function listTeams () {
-    return teams.map(team => 
         <Card fluid color='red' key={team.teamId} header={team.teamName} description={team.description} as={ Link } to={"/" + team.teamId} />
     )
-  }3
+  }
 
 
   return (
