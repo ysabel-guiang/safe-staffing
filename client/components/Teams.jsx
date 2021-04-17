@@ -1,16 +1,45 @@
-import React from 'react'
-import { Card, Grid, Form, Modal, Button, Input, Header } from 'semantic-ui-react'
+import React, {useState, useEffect} from 'react'
+import { Link } from 'react-router-dom'
+import { Card, Grid, Form, Modal, Button, Input, Header, Divider } from 'semantic-ui-react'
+
+import { getTeams } from '../apiClient'
 
 
 const Teams = () => {
   const [open, setOpen] = React.useState(false)
+  const [teams, setTeams] = useState([{teamId:'',teamName: '', description:''}])
+
+  useEffect(() => {
+    getTeams()
+      .then(teams => {
+        setTeams(teams)
+      })
+      .catch(err => console.error('not working'))
+  },[])
+
+  function listTeams () {
+    return teams.map(team => 
+      <div class="ui red fluid card">
+          <div class="content">
+            <div class="header">{team.teamName}</div>
+            <div class="description">{team.teamDescription}</div>
+          </div>
+        </div>  
+    )
+  }
+
+  function listTeams () {
+    return teams.map(team => 
+        <Card fluid color='red' key={team.teamId} header={team.teamName} description={team.description} as={ Link } to={"/" + team.teamId} />
+    )
+  }3
+
 
   return (
     <>
     <Grid.Column width={9}> 
       <Card.Group>
-        <Card fluid color='red' header='Lights R Us'description='phone company' />
-        <Card fluid color='red' header='Telecom' description='phone company' />
+        {listTeams()}
 
         <Modal
         onClose={() => setOpen(false)}
@@ -86,11 +115,12 @@ const Teams = () => {
             />
           </Modal.Actions> 
         </Modal>
-
       </Card.Group>
+
     </Grid.Column>
     </>
   )
 }
 
 export default Teams
+  

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
-import {HashRouter as Router, Route} from 'react-router-dom'
-import { Grid, Dropdown, Menu, Segment } from 'semantic-ui-react'
+import {HashRouter as Router, Route, Link} from 'react-router-dom'
+import { Grid, Dropdown, Menu, Segment, DropdownItem } from 'semantic-ui-react'
 
 import { getTeams } from '../apiClient'
 
@@ -8,8 +8,8 @@ import Teams from './Teams'
 import Company from './Company'
 
 
-const App = () => {
-  const [teams, setTeams] = useState({teamId:'',teamName: '', description:''})
+const App = (props) => {
+  const [teams, setTeams] = useState([{teamId:'',teamName: '', description:''}])
 
   useEffect(() => {
     getTeams()
@@ -18,6 +18,17 @@ const App = () => {
       })
       .catch(err => console.error('not working'))
   },[])
+
+  function handleClick (evt) {
+    evt.preventDefault()
+    let target = evt.target
+    let value = target.getAttribute('value')
+    console.log(value)
+    props.history.push(value)
+    return null
+  }
+  
+
 
   return (
     <>
@@ -37,16 +48,24 @@ const App = () => {
       <Grid.Row>
         <Grid.Column width={3}>
           <Menu secondary vertical>
-            <Menu.Item name='Home'/>
+            <Menu.Item 
+            name='Home'
+            value='/'
+            onClick={handleClick}
+            />
 
-            <Dropdown item text='Teams'>
-              <Dropdown.Menu>
-                <Dropdown.Header>Teams</Dropdown.Header>
-                <Dropdown.Item>Small</Dropdown.Item>
-                <Dropdown.Item>Medium</Dropdown.Item>
-                <Dropdown.Item>Large</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>  
+            <Dropdown 
+            item 
+            text='Teams'
+            options={teams.map(team => {
+              return {
+                key: team.teamId,
+                text: team.teamName,
+                value: '/' + team.Id
+              }
+            })}
+            />
+               
           </Menu>
         </Grid.Column>
         <Route exact path='/' component={Teams} />
