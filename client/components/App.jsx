@@ -1,13 +1,27 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
+import {HashRouter as Router, Route} from 'react-router-dom'
 import { Grid, Dropdown, Menu, Segment } from 'semantic-ui-react'
+
+import { getTeams } from '../apiClient'
+
 import Teams from './Teams'
 import Company from './Company'
 
 
 const App = () => {
+  const [teams, setTeams] = useState({teamId:'',teamName: '', description:''})
+
+  useEffect(() => {
+    getTeams()
+      .then(teams => {
+        setTeams(teams)
+      })
+      .catch(err => console.error('not working'))
+  },[])
+
   return (
     <>
-
+    <Router>
     <Grid style={{ height:'20vh'}} verticalAlign='top'>
 
       <Grid.Row>
@@ -35,11 +49,12 @@ const App = () => {
             </Dropdown>  
           </Menu>
         </Grid.Column>
-
-        <Teams />
+        <Route exact path='/' component={Teams} />
+        <Route exact path='/:teamId' component={Company} />
       </Grid.Row>
 
     </Grid>
+    </Router>
     </>
   )
 }

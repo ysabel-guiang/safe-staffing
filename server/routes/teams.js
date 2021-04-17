@@ -4,7 +4,13 @@ const router = express.Router()
 const db = require('../db/db')
 
 router.get('/', (req, res) => {
-    res.send('hello world')
+  db.getAllTeams()
+    .then(teams => {
+      res.json(teams)
+    })
+    .catch(err => {
+      res.status(500).send(err.message)
+    })
   }
 )
 
