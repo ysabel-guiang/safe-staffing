@@ -19,3 +19,9 @@ export function addTeam (teamInfo) {
   .post(teamUrl)
   .send(teamInfo)
 }
+
+export function addMember (teamId, memberInfo) {
+  return request
+  .post(teamUrl + teamId)
+  .send(memberInfo)
+}

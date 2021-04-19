@@ -1,17 +1,33 @@
 import React, {useState, useEffect} from 'react'
 import { Card, Grid, Header, Icon, Progress, Button, Modal, Form, Input, Radio, Select, Dropdown } from 'semantic-ui-react'
 
-import { getTeamMembers } from '../apiClient'
+import { getTeamMembers, addMember } from '../apiClient'
 
+const initialMemberData = {
+  name: '',
+  role: '',
+  email: '',
+  contact: ''
+}
+
+const options = [
+  { key: 'angular', text: 'Angular', value: 'angular' },
+  { key: 'css', text: 'CSS', value: 'css' },
+]
 
 const Company = (props) => {
   const { teamId } = props.match.params
 
-  const [taskOpen, setTask] = useState(false)
-  const [employeeOpen, setEmployee] = useState(false)
+  const [taskOpen, setTaskBar] = useState(false)
+  const [employeeOpen, setEmployeeBar] = useState(false)
   const [teamMembers, setMembers] = useState([{employeeId:'', role: '', name: '', contact: '', email: '', hours: ''}])
+  const [newMember, setNewMember] = useState(initialMemberData)
 
   useEffect(() => {
+    viewTeamMembers()
+  }, [])
+
+  function viewTeamMembers () {
     getTeamMembers(teamId)
       .then(members => {
         setMembers(members)
@@ -19,12 +35,29 @@ const Company = (props) => {
       .catch(err => {
         console.error(err.message)
       })
-  }, [])
+  }
 
-  const options = [
-    { key: 'angular', text: 'Angular', value: 'angular' },
-    { key: 'css', text: 'CSS', value: 'css' },
-  ]
+  function handleMemberChange (evt) {
+    setNewMember(
+      {...newMember,
+       [evt.target.name]: evt.target.value
+      })
+  }
+
+  function handleMemberSubmit (evt) {
+    setEmployeeBar(false)
+    evt.preventDefault()
+    
+    addMember(teamId, newMember)
+      .then(() => {
+        setNewMember(initialMemberData)
+        viewTeamMembers()
+        return null
+      })
+      .catch(e => 
+        console.log('new team member not sent'))
+  }
+
 
   //based on four day work week
   function hoursToPercentage (hours) {
@@ -87,8 +120,8 @@ const Company = (props) => {
       </Card.Group>
       
       <Modal
-        onClose={() => setEmployee(false)}
-        onOpen={() => setEmployee(true)}
+        onClose={() => setEmployeeBar(false)}
+        onOpen={() => setEmployeeBar(true)}
         open={employeeOpen}
         trigger={<button className="ui button">Add Team Member</button>}
        >
@@ -102,12 +135,14 @@ const Company = (props) => {
                   label='Full Name'
                   placeholder='Full Name'
                   name='name'
+                  onChange={handleMemberChange}
                 />
                 <Form.Field
                   control={Input}
                   label='Role'
                   placeholder='Role'
                   name='role'
+                  onChange={handleMemberChange}
                 />
               </Form.Group>
 
@@ -117,12 +152,14 @@ const Company = (props) => {
                   label='Email Address'
                   placeholder='Email Address'
                   name='email'
+                  onChange={handleMemberChange}
                 />
                 <Form.Field
                   control={Input}
                   label='Contact Number'
                   placeholder='Contact Number'
                   name='contact'
+                  onChange={handleMemberChange}
                 />
               </Form.Group>
             </Form>
@@ -130,7 +167,7 @@ const Company = (props) => {
          </Modal.Content>
 
          <Modal.Actions>
-          <Button color='black' onClick={() => setEmployee(false)}>
+          <Button color='black' onClick={() => setEmployeeBar(false)}>
             Cancel
           </Button>
 
@@ -138,7 +175,7 @@ const Company = (props) => {
             content="Add Team Member"
             labelPosition='right'
             icon='checkmark'
-            onClick={() => setEmployee(false)}
+            onClick={handleMemberSubmit}
             positive
           />
         </Modal.Actions> 
@@ -150,8 +187,8 @@ const Company = (props) => {
       </Header>
 
       <Modal
-        onClose={() => setTask(false)}
-        onOpen={() => setTask(true)}
+        onClose={() => setTaskBar(false)}
+        onOpen={() => setTaskBar(true)}
         open={taskOpen}
         trigger={<button className="ui button">Assign a Task</button>}
        >
@@ -209,7 +246,7 @@ const Company = (props) => {
          </Modal.Content>
 
          <Modal.Actions>
-          <Button color='black' onClick={() => setTask(false)}>
+          <Button color='black' onClick={() => setTaskBar(false)}>
             Cancel
           </Button>
 
@@ -217,7 +254,7 @@ const Company = (props) => {
             content="Assign Task"
             labelPosition='right'
             icon='checkmark'
-            onClick={() => setTask(false)}
+            onClick={() => setTaskBar(false)}
             positive
           />
         </Modal.Actions> 
