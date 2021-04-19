@@ -14,3 +14,8 @@ export function getTeamMembers(teamId) {
     .then(res => res.body)
 }
 
+export function addTeam (teamInfo) {
+  return request
+  .post(teamUrl)
+  .send(teamInfo)
+}

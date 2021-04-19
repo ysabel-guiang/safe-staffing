@@ -26,6 +26,11 @@ const Company = (props) => {
     { key: 'css', text: 'CSS', value: 'css' },
   ]
 
+  //based on four day work week
+  function hoursToPercentage (hours) {
+    return Math.floor(hours / 27 * 100)
+  }
+
   function listTeamMemberCards () {
     return teamMembers.map(member => 
       <Card key={member.employeeId}>
@@ -58,7 +63,7 @@ const Company = (props) => {
             {member.role}
           </Header.Subheader>
         </Header>
-        <Progress percent={44} color='blue' progress key={Number(member.employeeId) + 2}/>
+        <Progress percent={hoursToPercentage(member.hours)} color='blue' progress key={Number(member.employeeId) + 2}/>
       </>
     )
   }

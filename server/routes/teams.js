@@ -25,4 +25,21 @@ router.get('/:teamId', (req,res) => {
     })
 })
 
+router.post('/', (req,res) => {
+  const { teamName, description, name, role, email, contact } = req.body
+  db.addTeam(teamName, description)
+  .then(id => { 
+    db.addEmployee(id[0], name, role, email, contact)
+    .then(() => {
+      res.status(200).send()
+    })
+    .catch(err => {
+      res.status(500).send(err.message)
+    })
+  })
+  .catch(err => {
+    res.status(500).send(err.message)
+  })
+})
+
 module.exports = router
