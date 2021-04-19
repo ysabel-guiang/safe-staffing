@@ -5,7 +5,11 @@ module.exports = {
   getAllTeams,
   getEmployees,
   addTeam,
-  addEmployee
+  addEmployee,
+  addTask,
+  addEmployeesAndTasks,
+  getEmployee,
+  updateEmployeeHours
   
 }
 
@@ -15,8 +19,8 @@ function getAllTeams (db = connection) {
 
 function getEmployees (team_id, db = connection) {
   return db('employees')
-  .where('team_id', team_id)
-  .select('employee_id as employeeId', 'name', 'role', 'email', 'contact', 'hours')
+    .where('team_id', team_id)
+    .select('employee_id as employeeId', 'name', 'role', 'email', 'contact', 'hours')
 }
 
 function addTeam (team_name, description, db = connection) {
@@ -36,3 +40,34 @@ function addEmployee (team_id, name, role, email, contact, db = connection) {
     hours: 0 
   })
 }
+
+function addTask (task_name, hours_work, urgency, db = connection) {
+  return db('tasks').insert({
+    task_name,
+    hours_work,
+    urgency
+  })
+}
+
+function addEmployeesAndTasks (task_id, [employees], db = connection) {
+  return db('employees_tasks').insert(
+    employees.map(employeeId => {
+      return {
+        task_id,
+        employee_id: employeeId
+      }})
+  )
+}
+
+function getEmployee ([name], db = connection) {
+  return('employees')
+    .whereIn('name', name)
+    .select('employee_id as employeeId', 'name', 'role', 'email', 'contact', 'hours')
+}
+
+function updateEmployeeHours ([id], hours, db = connection) {
+  return('employees')
+  .whereIn('employee_id', '=', id)
+  .increment('hours', hours)
+}
+

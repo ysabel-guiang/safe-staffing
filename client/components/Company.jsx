@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
-import { Card, Grid, Header, Icon, Progress, Button, Modal, Form, Input, Radio, Select, Dropdown } from 'semantic-ui-react'
+import { Card, Grid, Header, Icon, Progress, Button, Modal, Form, Input, Radio, Select, Dropdown, DropdownItem } from 'semantic-ui-react'
 
-import { getTeamMembers, addMember } from '../apiClient'
+import { getTeamMembers, addMember, addTask } from '../apiClient'
 
 const initialMemberData = {
   name: '',
@@ -10,10 +10,22 @@ const initialMemberData = {
   contact: ''
 }
 
-const options = [
-  { key: 'angular', text: 'Angular', value: 'angular' },
-  { key: 'css', text: 'CSS', value: 'css' },
-]
+const initialTaskData = {
+  taskName: '',
+  hoursWork: 0,
+  employees: [],
+  urgency: 0 
+}
+
+const hoursWork = []
+
+for(let i = 0.25; i < 27; i+=0.25) {
+  hoursWork.push({
+    key: i,
+    text: i + ' hours',
+    value: i 
+  })
+}
 
 const Company = (props) => {
   const { teamId } = props.match.params
@@ -22,6 +34,7 @@ const Company = (props) => {
   const [employeeOpen, setEmployeeBar] = useState(false)
   const [teamMembers, setMembers] = useState([{employeeId:'', role: '', name: '', contact: '', email: '', hours: ''}])
   const [newMember, setNewMember] = useState(initialMemberData)
+  const [newTask, setNewTask] = useState (initialTaskData)
 
   useEffect(() => {
     viewTeamMembers()
@@ -37,6 +50,13 @@ const Company = (props) => {
       })
   }
 
+  const memberOptions = teamMembers.map(member => { 
+    return {
+      key: member.employeeId,
+      text: member.name,
+      value: member.name
+    }})
+
   function handleMemberChange (evt) {
     setNewMember(
       {...newMember,
@@ -47,7 +67,7 @@ const Company = (props) => {
   function handleMemberSubmit (evt) {
     setEmployeeBar(false)
     evt.preventDefault()
-    
+
     addMember(teamId, newMember)
       .then(() => {
         setNewMember(initialMemberData)
@@ -56,6 +76,26 @@ const Company = (props) => {
       })
       .catch(e => 
         console.log('new team member not sent'))
+  }
+
+  function handleTaskChange (evt, result) {
+    const { name, value } = result || evt.target
+    setNewTask({...newTask,
+      [name]: value
+    })
+    console.log(newTask)
+  }
+
+  function handleTaskSubmit (evt) {
+    setTaskBar(false)
+    evt.preventDefault()
+    addTask(newTask)
+      .then(() => {
+        setNewTask(initialTaskData)
+        viewTeamMembers()
+      })
+      .catch((err) => 
+      console.log('not sending task'))
   }
 
 
@@ -201,44 +241,53 @@ const Company = (props) => {
                   control={Input}
                   label='What is the Task?'
                   placeholder='Task'
-                  name='task'
+                  name='taskName'
+                  onChange={handleTaskChange}
                 />
                 <Form.Field
-                  control={Dropdown}
-                  label='Who will be doing the task?'
-                  name='employees'
-                  placeholder='Employees'
-                  multiple selection
-                  options={options}
+                control={Dropdown}
+                multiple selection
+                label='Who will be doing this task?'
+                placeholder='Employees'
+                name='employees'
+                options={memberOptions}
+                value={newTask.employees}
+                onChange={handleTaskChange}
                 />
+
               </Form.Group>
 
               <Form.Group inline>
                 <Form.Field
                     control={Select}
                     label='How long will the task take?'
-                    name='hours'
+                    name='hoursWork'
                     placeholder='Time'
-                    options={options}
+                    options={hoursWork}
+                    value={newTask.hoursWork}
+                    onChange={handleTaskChange}
                   />
                 <label>Urgency</label>
                 <Form.Field
                   control={Radio}
                   name='urgency'
                   label='Not Urgent'
-                  value='1'
+                  value={0}
+                  onChange={handleTaskChange}
                 />
                 <Form.Field
                   control={Radio}
                   name='urgency'
                   label='Medium Urgency'
-                  value='2'
+                  value={0.5}
+                  onChange={handleTaskChange}
                 />
                 <Form.Field
                   control={Radio}
                   name='urgency'
                   label='Urgent'
-                  value='3'
+                  value={0}
+                  onChange={handleTaskChange}
                 />
              </Form.Group>
             </Form>
@@ -254,7 +303,7 @@ const Company = (props) => {
             content="Assign Task"
             labelPosition='right'
             icon='checkmark'
-            onClick={() => setTaskBar(false)}
+            onClick={handleTaskSubmit}
             positive
           />
         </Modal.Actions> 
@@ -268,3 +317,4 @@ const Company = (props) => {
 }
 
 export default Company
+

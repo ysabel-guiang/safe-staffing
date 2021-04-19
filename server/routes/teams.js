@@ -55,4 +55,43 @@ router.post('/:teamId', (req,res) => {
     })
 })
 
+router.post('/task', (req,res) => {
+  const {taskName, hoursWork, urgency, employees} = req.body
+
+  db.addTask(taskName, hoursWork, urgency)
+    .then(taskId => {
+      
+      db.getEmployee(employees)
+        .then(employeeArr => {
+          const employeeIdArr = employeeArr.map(employee => employee.employee_id)
+          
+          db.addEmployeesAndTasks(taskId[0], employeeIdArr)
+            .then(() => {
+              
+              db.updateEmployeeHours(employeeIdArr, findHours(hoursWork, urgency, employees))
+                .then(() => {
+                  res.status.send(200)
+                })
+                .catch(err => {
+                  res.status(500).send(err.message)
+                })
+            })
+            .catch(err => {
+              res.status(500).send(err.message)
+            })
+        })
+        .catch(err => {
+          res.status(500).send(err.message)
+        })
+
+    })
+    .catch(err => {
+      res.status(500).send(err.message)
+    })
+})
+
 module.exports = router
+
+function findHours (hours, urgency, [employeeArr]) {
+  return ((Number(hours) + Number(urgency)) / employeeArr.length)
+}

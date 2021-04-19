@@ -3,6 +3,7 @@ exports.up = function(knex) {
     table.increments('task_id').primary()
     table.string('task_name')
     table.decimal('hours_work')
+    table.decimal('urgency')
   })
 };
 
