@@ -8,7 +8,6 @@ module.exports = {
   addEmployee,
   addTask,
   addEmployeesAndTasks,
-  getEmployee,
   updateEmployeeHours
   
 }
@@ -49,7 +48,7 @@ function addTask (task_name, hours_work, urgency, db = connection) {
   })
 }
 
-function addEmployeesAndTasks (task_id, [employees], db = connection) {
+function addEmployeesAndTasks (task_id, employees, db = connection) {
   return db('employees_tasks').insert(
     employees.map(employeeId => {
       return {
@@ -59,15 +58,10 @@ function addEmployeesAndTasks (task_id, [employees], db = connection) {
   )
 }
 
-function getEmployee ([name], db = connection) {
-  return('employees')
-    .whereIn('name', name)
-    .select('employee_id as employeeId', 'name', 'role', 'email', 'contact', 'hours')
-}
-
-function updateEmployeeHours ([id], hours, db = connection) {
-  return('employees')
-  .whereIn('employee_id', '=', id)
+function updateEmployeeHours (id, hours, db = connection) {
+  return db('employees')
+  .where('employee_id', id)
   .increment('hours', hours)
+
 }
 

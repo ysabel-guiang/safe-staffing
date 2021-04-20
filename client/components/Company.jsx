@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { Card, Grid, Header, Icon, Progress, Button, Modal, Form, Input, Radio, Select, Dropdown, DropdownItem } from 'semantic-ui-react'
 
-import { getTeamMembers, addMember, addTask } from '../apiClient'
+import { getTeamMembers, addMember, addTask, updateHours } from '../apiClient'
 
 const initialMemberData = {
   name: '',
@@ -44,6 +44,7 @@ const Company = (props) => {
     getTeamMembers(teamId)
       .then(members => {
         setMembers(members)
+        console.log(members)
       })
       .catch(err => {
         console.error(err.message)
@@ -54,7 +55,7 @@ const Company = (props) => {
     return {
       key: member.employeeId,
       text: member.name,
-      value: member.name
+      value: member.employeeId
     }})
 
   function handleMemberChange (evt) {
@@ -83,18 +84,26 @@ const Company = (props) => {
     setNewTask({...newTask,
       [name]: value
     })
-    console.log(newTask)
   }
 
   function handleTaskSubmit (evt) {
     setTaskBar(false)
     evt.preventDefault()
-    addTask(newTask)
+    console.log('trying')
+
+    addTask(teamId, newTask)
       .then(() => {
-        setNewTask(initialTaskData)
-        viewTeamMembers()
+        updateHours(teamId, newTask)
+          .then(() => {
+            setNewTask(initialTaskData)
+            console.log('working')
+            viewTeamMembers()
+            return null
+          })
+          .catch(err => 
+            console.log('not sending task'))
       })
-      .catch((err) => 
+      .catch(err => 
       console.log('not sending task'))
   }
 

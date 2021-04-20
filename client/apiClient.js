@@ -26,8 +26,14 @@ export function addMember (teamId, memberInfo) {
   .send(memberInfo)
 }
 
-export function addTask (taskInfo) {
+export function addTask (teamId, taskInfo) {
   return request
-    .post(teamUrl + 'task')
+    .post(teamUrl + teamId + '/task')
     .send(taskInfo)
+}
+
+export function updateHours (teamId, taskInfo) {
+  return request
+  .patch(teamUrl + teamId + '/task')
+  .send(taskInfo)
 }

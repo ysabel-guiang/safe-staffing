@@ -55,34 +55,25 @@ router.post('/:teamId', (req,res) => {
     })
 })
 
-router.post('/task', (req,res) => {
+router.get ('/:teamId/task', (req,res) => {
+  res.send('hello')
+  return null
+})
+
+router.post('/:teamId/task', (req,res) => {
+  
   const {taskName, hoursWork, urgency, employees} = req.body
 
   db.addTask(taskName, hoursWork, urgency)
     .then(taskId => {
-      
-      db.getEmployee(employees)
-        .then(employeeArr => {
-          const employeeIdArr = employeeArr.map(employee => employee.employee_id)
-          
-          db.addEmployeesAndTasks(taskId[0], employeeIdArr)
-            .then(() => {
-              
-              db.updateEmployeeHours(employeeIdArr, findHours(hoursWork, urgency, employees))
-                .then(() => {
-                  res.status.send(200)
-                })
-                .catch(err => {
-                  res.status(500).send(err.message)
-                })
-            })
-            .catch(err => {
-              res.status(500).send(err.message)
-            })
+  
+      db.addEmployeesAndTasks(taskId[0], employees)
+        .then(() => {
+          res.status(200).send()
         })
-        .catch(err => {
-          res.status(500).send(err.message)
-        })
+      .catch(err => {
+        res.status(500).send(err.message)
+      })
 
     })
     .catch(err => {
@@ -90,8 +81,56 @@ router.post('/task', (req,res) => {
     })
 })
 
+router.patch('/:teamId/task', (req,res) => {
+  const {hoursWork, urgency, employees} = req.body
+  const hoursEach = findHours(hoursWork,urgency, employees)
+
+  employees.map(employeeId => {
+    return db.updateEmployeeHours(employeeId, hoursWork)
+    .then(() => {
+      res.status(200).send()
+    })
+    .catch(err => {
+      res.status(500).send(err.message)
+    })
+  })
+  res.status(200).send()
+  
+})
+
+
+
+
 module.exports = router
 
-function findHours (hours, urgency, [employeeArr]) {
-  return ((Number(hours) + Number(urgency)) / employeeArr.length)
+function findHours (hours, urgency, employeeArr) {
+  return Number((Number(hours) + Number(urgency)) / employeeArr.length)
 }
+
+function updateHours () {
+
+  for(let i = 0; i < employeeArr.length; i++) {
+
+    db.updateEmployeeHours(employeeIdArr[i], hoursWork)
+    .then(() => {
+      res.status(200).send()
+      trial([i+1], hoursWork)
+    })
+    .catch(err => {
+      res.status(500).send(err.message)
+    })
+  }
+}
+
+function trial (id, hoursWork) {
+
+  db.updateEmployeeHours(id, hoursWork)
+    .then(() => {
+      res.status(200).send()
+      updateHours()
+    })
+    .catch(err => {
+      res.status(500).send(err.message)
+    })
+}
+
