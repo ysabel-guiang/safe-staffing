@@ -6,6 +6,7 @@ import { getTeams } from '../apiClient'
 
 import Teams from './Teams'
 import Company from './Company'
+import Edit from './Edit'
 
 
 const App = () => {
@@ -60,6 +61,7 @@ const App = () => {
         </Grid.Column>
         <Route exact path='/' component={Teams} />
         <Route exact path='/:teamId' component={Company} />
+        <Route exact path='/:teamId/:employeeId' component={Edit} />
       </Grid.Row>
 
     </Grid>

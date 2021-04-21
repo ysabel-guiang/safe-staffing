@@ -34,6 +34,24 @@ export function addTask (teamId, taskInfo) {
 
 export function updateHours (teamId, taskInfo) {
   return request
-  .patch(teamUrl + teamId + '/task')
-  .send(taskInfo)
+    .patch(teamUrl + teamId + '/task')
+    .send(taskInfo)
+}
+
+export function getEmployee (teamId, employeeId) {
+  return request
+    .get(teamUrl + teamId + '/' + employeeId)
+    .then(res => res.body)
+}
+
+export function updateEmployee (employeeInfo, teamId) {
+  return request
+    .patch(teamUrl + teamId + '/' + employeeInfo.employeeId)
+    .send(employeeInfo)
+}
+
+export function deleteEmployee (employeeId, teamId) {
+  return request
+    .delete(teamUrl + teamId + '/' + employeeId)
+    .then(res => res.body)
 }

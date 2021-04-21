@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react'
+import { Link } from 'react-router-dom'
 import { Card, Grid, Header, Icon, Progress, Button, Modal, Form, Input, Radio, Select, Dropdown, DropdownItem } from 'semantic-ui-react'
 
 import { getTeamMembers, addMember, addTask, updateHours } from '../apiClient'
@@ -129,7 +130,7 @@ const Company = (props) => {
         </Card.Description>
       </Card.Content>
       <Card.Content extra textAlign='center'>
-        <Button compact primary>Edit</Button>
+        <Button compact primary as={ Link } to={'/' + teamId +'/' + member.employeeId}>Edit</Button>
         <Button compact secondary>Assign Task</Button>
       </Card.Content>
     </Card> 
@@ -155,13 +156,13 @@ const Company = (props) => {
     <>
     <Grid.Column width={10}> 
       <Header as='h2'>
-        <Icon name='plug' />
-        <Header.Content>Vodafone</Header.Content>
+        <Icon name='building' />
+        <Header.Content>{teamMembers[0].teamName}</Header.Content>
       </Header>
 
       <Header as='h4'>
         <Icon name='group' />
-        <Header.Content>Employees</Header.Content>
+        <Header.Content>Team Members</Header.Content>
       </Header>
 
       <Card.Group itemsPerRow={3}>
