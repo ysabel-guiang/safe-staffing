@@ -37,7 +37,7 @@ const Teams = () => {
       .then((teams) => {
         setTeams(teams)
       })
-      .catch((err) => console.error('not working'))
+      .catch(() => console.error('not working'))
   }
 
   function handleChange(evt) {
@@ -53,7 +53,7 @@ const Teams = () => {
         viewTeams()
         return null
       })
-      .catch((e) => console.log('new team not created'))
+      .catch(() => console.log('new team not created'))
   }
 
   function listTeams() {

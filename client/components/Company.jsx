@@ -13,7 +13,6 @@ import {
   Radio,
   Select,
   Dropdown,
-  DropdownItem,
 } from 'semantic-ui-react'
 
 import { getTeamMembers, addMember, addTask, updateHours } from '../apiClient'
@@ -90,7 +89,7 @@ const Company = (props) => {
         viewTeamMembers()
         return null
       })
-      .catch((e) => console.log('new team member not sent'))
+      .catch(() => console.log('new team member not sent'))
   }
 
   function handleTaskChange(evt, result) {
@@ -99,22 +98,19 @@ const Company = (props) => {
   }
 
   function handleTaskSubmit(evt) {
-    setTaskBar(false)
     evt.preventDefault()
-    console.log('trying')
+    setTaskBar(false)
 
     addTask(teamId, newTask)
       .then(() => {
-        updateHours(teamId, newTask)
-          .then(() => {
-            setNewTask(initialTaskData)
-            console.log('working')
-            viewTeamMembers()
-            return null
-          })
-          .catch((err) => console.log('not sending task'))
+      return updateHours(teamId, newTask)
       })
-      .catch((err) => console.log('not sending task'))
+      .then(() => {
+        setNewTask(initialTaskData)
+        viewTeamMembers()
+        return null
+      })
+      .catch(() => console.log('not sending task'))
   }
 
   //based on four day work week

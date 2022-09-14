@@ -20,7 +20,7 @@ function Edit(props) {
       .then((result) => {
         setMember(result)
       })
-      .catch((err) => console.log('unable to get employee'))
+      .catch(() => console.log('unable to get employee'))
   }, [])
 
   function handleChange(evt) {
@@ -35,7 +35,7 @@ function Edit(props) {
         setMember(initialMemberData)
         props.history.push('/' + teamId)
       })
-      .catch((err) => console.log('updated member not sent'))
+      .catch(() => console.log('updated member not sent'))
   }
 
   function handleDelete(evt) {
@@ -45,7 +45,7 @@ function Edit(props) {
         setMember(initialMemberData)
         props.history.push('/' + teamId)
       })
-      .catch((err) => console.log('member not deleted'))
+      .catch(() => console.log('member not deleted'))
   }
 
   return (
@@ -55,7 +55,6 @@ function Edit(props) {
 
         <Form>
           <Form.Field>
-            <label>Full Name</label>
             <input
               name="name"
               placeholder={member.name}

@@ -18,7 +18,7 @@ const App = () => {
       .then((teams) => {
         setTeams(teams)
       })
-      .catch((err) => console.error('not working'))
+      .catch(() => console.error('not working'))
   }, [])
 
   function listTeams() {
