@@ -15,7 +15,8 @@
     "test": "jest --watchAll --verbose",
     "webpack": "webpack --config ./client/webpack.config.js",
     "lint": "eslint --ext .js,.jsx .",
-    "knex": "knex --knexfile server/db/knexfile.js"
+    "knex": "knex --knexfile server/db/knexfile.js",
+    "format": "prettier -w **/*.{js,jsx}"
   },
   "keywords": [
     "frontend"
