@@ -9,3 +9,5 @@
 - Semantic UI
 - SQLite with Knex
 - Node.JS
+
+This project was made during my time as a web development student.
